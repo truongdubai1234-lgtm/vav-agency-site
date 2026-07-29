@@ -52,8 +52,7 @@ KHÔNG cần gõ lệnh export/set biến môi trường thủ công nữa.
 
 4) NỐI VÀO LANDING PAGE
    - Mở landing page, bấm icon bánh răng ⚙ ở footer.
-   - Nhập mã truy cập (mặc định: admin123 — nên đổi trong app.js,
-     biến ADMIN_PASSCODE_DEFAULT, trước khi dùng thật).
+   - Nhập mã truy cập .
    - Điền "AI Endpoint URL" = địa chỉ server bạn vừa deploy, ví dụ:
      https://your-app.up.railway.app/api/chat
    - Lưu lại. Khung chat AI trên trang sẽ tự chuyển sang "Đang hoạt động"
