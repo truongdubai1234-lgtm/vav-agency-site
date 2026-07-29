@@ -2,9 +2,19 @@
 const DEFAULT_SETTINGS = {
   messenger: "https://m.me/yourpage",
   telegram: "https://t.me/yourchannel",
+  whatsapp: "https://wa.me/84000000000",
+  wechat: "",
   email: "contact@vavagency.com",
   aiEndpoint: "", // e.g. https://your-server.com/api/chat — leave empty to use FAQ-only mode
-  logoUrl: "logo.png" // bundled logo file next to index.html; clear this to fall back to the "VA" text mark
+  logoUrl: "logo.png", // bundled logo file next to index.html; clear this to fall back to the "VA" text mark
+  companyLegalName: "VAV Agency Co., Ltd.",
+  companyTaxCode: "",
+  companyFounded: "2019",
+  companyAddress2: "TP. Hồ Chí Minh, Việt Nam",
+  companyRepresentative: "",
+  companyScale: "20-50 nhân sự",
+  companyField: "Agency Facebook",
+  companyImages: [] // array of image URLs — shown as a gallery in the Company Profile section
 };
 const ADMIN_PASSCODE_DEFAULT = "admin123"; // change this before going live
 
@@ -37,12 +47,56 @@ function getEffectiveAiEndpoint() {
 function applySettingsToPage() {
   const messengerLinks = [document.getElementById('contactMessengerBtn'), document.getElementById('chatMessengerLink')];
   const telegramLinks = [document.getElementById('contactTelegramBtn'), document.getElementById('chatTelegramLink')];
+  const whatsappLinks = [document.getElementById('contactWhatsappBtn'), document.getElementById('chatWhatsappLink')];
+  const wechatLinks = [document.getElementById('contactWechatBtn'), document.getElementById('chatWechatLink')];
   messengerLinks.forEach(el => { if (el) el.href = settings.messenger || '#'; });
   telegramLinks.forEach(el => { if (el) el.href = settings.telegram || '#'; });
+  whatsappLinks.forEach(el => { if (el) el.href = settings.whatsapp || '#'; });
+  wechatLinks.forEach(el => { if (el) el.href = settings.wechat || '#'; });
   const emailEl = document.getElementById('infoEmailVal');
   if (emailEl) emailEl.textContent = settings.email || DEFAULT_SETTINGS.email;
   applyLogo();
+  applyCompanyProfile();
   probeAiBackend();
+}
+
+function applyCompanyProfile() {
+  const map = {
+    companyLegalNameVal: settings.companyLegalName,
+    companyTaxCodeVal: settings.companyTaxCode,
+    companyFoundedVal: settings.companyFounded,
+    companyAddressVal2: settings.companyAddress2,
+    companyRepVal: settings.companyRepresentative,
+    companyScaleVal: settings.companyScale,
+    companyFieldVal: settings.companyField
+  };
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (el && map[id]) el.textContent = map[id];
+  });
+  const gallery = document.getElementById('companyGallery');
+  const emptyHint = document.getElementById('companyGalleryEmpty');
+  if (!gallery) return;
+  const images = Array.isArray(settings.companyImages) ? settings.companyImages.filter(Boolean) : [];
+  gallery.querySelectorAll('a.company-photo').forEach(el => el.remove());
+  if (images.length === 0) {
+    if (emptyHint) emptyHint.style.display = '';
+    return;
+  }
+  if (emptyHint) emptyHint.style.display = 'none';
+  images.forEach(url => {
+    const a = document.createElement('a');
+    a.className = 'company-photo';
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'VAV Agency';
+    img.loading = 'lazy';
+    a.appendChild(img);
+    gallery.appendChild(a);
+  });
 }
 
 async function probeAiBackend() {
@@ -108,7 +162,7 @@ async function syncSettingsFromServer() {
     if (!res.ok) return;
     const cfg = await res.json();
     let changed = false;
-    ['messenger', 'telegram', 'email'].forEach(k => {
+    ['messenger', 'telegram', 'whatsapp', 'wechat', 'email'].forEach(k => {
       if (cfg[k] && cfg[k] !== settings[k]) { settings[k] = cfg[k]; changed = true; }
     });
     if (changed) { saveSettings(settings); applySettingsToPage(); }
@@ -117,7 +171,7 @@ async function syncSettingsFromServer() {
 
 /* ============ i18n wiring ============ */
 const RTL_LANGS = ['ar'];
-let currentLang = 'vi';
+let currentLang = 'en';
 
 function t(key) {
   const dict = translations[currentLang] || translations.vi;
@@ -188,8 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   buildLangMenu();
-  let savedLang = 'vi';
-  try { savedLang = localStorage.getItem('site_lang') || 'vi'; } catch (e) { }
+  let savedLang = 'en';
+  try { savedLang = localStorage.getItem('site_lang') || 'en'; } catch (e) { }
   setLang(savedLang);
 
   initChatWidget();
@@ -327,7 +381,17 @@ function initAdminPanel() {
       formView.style.display = 'block';
       document.getElementById('setMessenger').value = settings.messenger || '';
       document.getElementById('setTelegram').value = settings.telegram || '';
+      document.getElementById('setWhatsapp').value = settings.whatsapp || '';
+      document.getElementById('setWechat').value = settings.wechat || '';
       document.getElementById('setEmail').value = settings.email || '';
+      document.getElementById('setCompanyLegalName').value = settings.companyLegalName || '';
+      document.getElementById('setCompanyTaxCode').value = settings.companyTaxCode || '';
+      document.getElementById('setCompanyFounded').value = settings.companyFounded || '';
+      document.getElementById('setCompanyAddress').value = settings.companyAddress2 || '';
+      document.getElementById('setCompanyRep').value = settings.companyRepresentative || '';
+      document.getElementById('setCompanyScale').value = settings.companyScale || '';
+      document.getElementById('setCompanyField').value = settings.companyField || '';
+      document.getElementById('setCompanyImages').value = (settings.companyImages || []).join('\n');
       document.getElementById('setAiEndpoint').value = settings.aiEndpoint || '';
       document.getElementById('setLogoUrl').value = settings.logoUrl || '';
     } else {
@@ -339,7 +403,18 @@ function initAdminPanel() {
   saveBtn.addEventListener('click', () => {
     settings.messenger = document.getElementById('setMessenger').value.trim() || DEFAULT_SETTINGS.messenger;
     settings.telegram = document.getElementById('setTelegram').value.trim() || DEFAULT_SETTINGS.telegram;
+    settings.whatsapp = document.getElementById('setWhatsapp').value.trim();
+    settings.wechat = document.getElementById('setWechat').value.trim();
     settings.email = document.getElementById('setEmail').value.trim() || DEFAULT_SETTINGS.email;
+    settings.companyLegalName = document.getElementById('setCompanyLegalName').value.trim();
+    settings.companyTaxCode = document.getElementById('setCompanyTaxCode').value.trim();
+    settings.companyFounded = document.getElementById('setCompanyFounded').value.trim();
+    settings.companyAddress2 = document.getElementById('setCompanyAddress').value.trim();
+    settings.companyRepresentative = document.getElementById('setCompanyRep').value.trim();
+    settings.companyScale = document.getElementById('setCompanyScale').value.trim();
+    settings.companyField = document.getElementById('setCompanyField').value.trim();
+    settings.companyImages = document.getElementById('setCompanyImages').value
+      .split('\n').map(s => s.trim()).filter(Boolean);
     settings.aiEndpoint = document.getElementById('setAiEndpoint').value.trim();
     settings.logoUrl = document.getElementById('setLogoUrl').value.trim();
     saveSettings(settings);

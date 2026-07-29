@@ -68,7 +68,13 @@ copy y nguyên giá trị từ file .env của bạn sang:
      ALLOWED_ORIGIN   = *   (sau này có domain thật thì đổi thành domain đó)
      MESSENGER_URL    = (link Messenger/fanpage thật của bạn)
      TELEGRAM_URL     = (link Telegram thật của bạn)
+     WHATSAPP_URL     = (link WhatsApp thật của bạn, dạng https://wa.me/84...)
+     WECHAT_URL       = (link/trang QR WeChat của bạn, để trống nếu chưa dùng)
      CONTACT_EMAIL    = (email liên hệ thật của bạn)
+
+   Riêng thông tin ở mục "Doanh nghiệp" trong admin panel (tên pháp lý, mã số
+   thuế, năm thành lập, ảnh doanh nghiệp...) KHÔNG nằm trong .env — chỉ điền
+   trực tiếp qua admin panel trên trang web (icon ⚙), lưu trong trình duyệt.
 
    Lưu ý: KHÔNG cần thêm PORT — Render tự cấp cổng riêng và code đã được
    viết để tự dùng đúng cổng đó.

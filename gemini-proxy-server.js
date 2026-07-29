@@ -43,9 +43,11 @@ const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*'; // lock this to your r
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 const MESSENGER_URL = process.env.MESSENGER_URL || '';
 const TELEGRAM_URL = process.env.TELEGRAM_URL || '';
+const WHATSAPP_URL = process.env.WHATSAPP_URL || '';
+const WECHAT_URL = process.env.WECHAT_URL || '';
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL || '';
 
-const SYSTEM_PROMPT = `Bạn là trợ lý ảo của một đơn vị cung cấp nguyên liệu quảng cáo Facebook (tài khoản quảng cáo, Business Manager, thẻ thanh toán quốc tế, fanpage, proxy, hỗ trợ kháng checkpoint). Trả lời ngắn gọn, chuyên nghiệp, thân thiện, đúng trọng tâm câu hỏi. Nếu không chắc chắn về chính sách giá/bảo hành cụ thể, hãy đề nghị khách nhắn tin trực tiếp qua Messenger hoặc Telegram để được tư vấn chính xác nhất. Trả lời bằng ngôn ngữ mà khách hàng sử dụng.`;
+const SYSTEM_PROMPT = `Bạn là trợ lý ảo của một đơn vị cung cấp Agency Facebook (tài khoản quảng cáo, Business Manager, thẻ thanh toán quốc tế, fanpage, proxy, hỗ trợ kháng checkpoint). Trả lời ngắn gọn, chuyên nghiệp, thân thiện, đúng trọng tâm câu hỏi. Nếu không chắc chắn về chính sách giá/bảo hành cụ thể, hãy đề nghị khách nhắn tin trực tiếp qua Messenger hoặc Telegram để được tư vấn chính xác nhất. Trả lời bằng ngôn ngữ mà khách hàng sử dụng.`;
 
 // ---- static site files served alongside the API (see header comment) ----
 const STATIC_FILES = {
@@ -152,6 +154,8 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, {
       messenger: MESSENGER_URL,
       telegram: TELEGRAM_URL,
+      whatsapp: WHATSAPP_URL,
+      wechat: WECHAT_URL,
       email: CONTACT_EMAIL
     });
   }
@@ -187,6 +191,6 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Gemini proxy listening on port ${PORT}`);
   console.log(`Loaded from .env (or real env vars) — GEMINI_API_KEY set: ${!!API_KEY}`);
-  console.log(`MESSENGER_URL: ${MESSENGER_URL || '(not set)'} | TELEGRAM_URL: ${TELEGRAM_URL || '(not set)'} | CONTACT_EMAIL: ${CONTACT_EMAIL || '(not set)'}`);
+  console.log(`MESSENGER_URL: ${MESSENGER_URL || '(not set)'} | TELEGRAM_URL: ${TELEGRAM_URL || '(not set)'} | WHATSAPP_URL: ${WHATSAPP_URL || '(not set)'} | WECHAT_URL: ${WECHAT_URL || '(not set)'} | CONTACT_EMAIL: ${CONTACT_EMAIL || '(not set)'}`);
   if (!API_KEY) console.warn('WARNING: GEMINI_API_KEY is not set — /api/chat will fail until you set it in .env.');
 });
