@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS = {
   companyLegalName: "VAV Agency Co., Ltd.",
   companyTaxCode: "",
   companyFounded: "2019",
-  companyAddress2: "TP. Hồ Chí Minh, Việt Nam",
+  companyAddress2: "TP. Hà Nội, Việt Nam",
   companyRepresentative: "",
   companyScale: "20-50 nhân sự",
   companyField: "Agency Facebook",
