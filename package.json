@@ -1,0 +1,10 @@
+{
+  "name": "vav-agency-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VAV Agency landing page + Gemini chat proxy — one server serves both.",
+  "main": "gemini-proxy-server.js",
+  "scripts": {
+    "start": "node gemini-proxy-server.js"
+  }
+}

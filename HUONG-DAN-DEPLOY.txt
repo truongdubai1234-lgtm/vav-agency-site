@@ -1,0 +1,129 @@
+HƯỚNG DẪN ĐƯA LANDING PAGE VAV AGENCY LÊN MẠNG THẬT
+=====================================================
+Dành cho người CHƯA có domain, CHƯA có hosting/server. Làm theo đúng thứ
+tự, không cần biết lập trình hay dùng dòng lệnh Git.
+
+Kết quả sau khi làm xong: 1 địa chỉ web dạng https://ten-cua-ban.onrender.com
+chạy được NGAY CẢ trang landing page LẪN chat AI — không cần 2 nơi host
+riêng, vì gemini-proxy-server.js đã được sửa để tự phục vụ luôn cả trang web.
+
+
+BƯỚC 1 — TẠO TÀI KHOẢN GITHUB (nơi lưu code, miễn phí)
+--------------------------------------------------------
+1. Vào https://github.com → bấm "Sign up" → tạo tài khoản (chỉ cần email).
+2. Sau khi đăng nhập, bấm dấu "+" góc trên bên phải → "New repository".
+3. Đặt tên repo, ví dụ: vav-agency-site. Để "Public" hoặc "Private" đều
+   được. KHÔNG tick "Add a README file". Bấm "Create repository".
+
+
+BƯỚC 2 — TẢI TOÀN BỘ FILE LÊN GITHUB (kéo thả, không cần cài gì)
+--------------------------------------------------------
+1. Ở trang repo vừa tạo, bấm dòng chữ "uploading an existing file".
+2. Kéo thả TẤT CẢ các file trong thư mục này vào, TRỪ file ".env"
+   (file .env chứa thông tin bí mật — không bao giờ đưa lên GitHub):
+     - index.html
+     - styles.css
+     - app.js
+     - i18n.js
+     - logo.png
+     - gemini-proxy-server.js
+     - package.json
+     - gemini-proxy-README.txt (không bắt buộc, chỉ là tài liệu)
+3. Cuộn xuống, bấm "Commit changes" (nút màu xanh) để lưu.
+
+
+BƯỚC 3 — TẠO TÀI KHOẢN RENDER (nơi CHẠY server thật, có gói miễn phí)
+--------------------------------------------------------
+1. Vào https://render.com → "Get Started" → chọn đăng nhập bằng GitHub
+   (nút "Sign up with GitHub") để 2 bên tự liên kết với nhau, khỏi phải
+   nhập lại thông tin.
+2. Cho phép Render truy cập vào tài khoản GitHub của bạn khi được hỏi.
+
+
+BƯỚC 4 — TẠO WEB SERVICE TRÊN RENDER
+--------------------------------------------------------
+1. Trong Render Dashboard, bấm "New +" → "Web Service".
+2. Chọn repo "vav-agency-site" vừa tạo ở Bước 2 → bấm "Connect".
+3. Điền các mục:
+     Name: vav-agency  (hoặc tên bạn thích — sẽ thành 1 phần của link web)
+     Region: chọn nơi gần Việt Nam nhất (Singapore nếu có)
+     Branch: main
+     Runtime: Node
+     Build Command: npm install   (Render thường tự điền sẵn, để nguyên)
+     Start Command: node gemini-proxy-server.js  (để nguyên nếu tự điền)
+     Instance Type: Free
+4. KHÔNG bấm "Create Web Service" vội — làm tiếp Bước 5 để điền thông tin
+   bí mật trước.
+
+
+BƯỚC 5 — ĐIỀN "ENVIRONMENT VARIABLES" (thay cho file .env)
+--------------------------------------------------------
+Mở file ".env" trên máy bạn, bạn sẽ thấy các dòng dạng TÊN=giá_trị.
+Trong màn hình tạo Web Service ở Render, tìm phần "Environment Variables"
+(hoặc "Advanced" → "Add Environment Variable"), thêm từng dòng một,
+copy y nguyên giá trị từ file .env của bạn sang:
+
+     GEMINI_API_KEY   = (key lấy tại https://aistudio.google.com/apikey)
+     GEMINI_MODEL     = gemini-2.0-flash
+     ALLOWED_ORIGIN   = *   (sau này có domain thật thì đổi thành domain đó)
+     MESSENGER_URL    = (link Messenger/fanpage thật của bạn)
+     TELEGRAM_URL     = (link Telegram thật của bạn)
+     CONTACT_EMAIL    = (email liên hệ thật của bạn)
+
+   Lưu ý: KHÔNG cần thêm PORT — Render tự cấp cổng riêng và code đã được
+   viết để tự dùng đúng cổng đó.
+
+   Nếu bạn CHƯA có GEMINI_API_KEY, vẫn có thể bỏ trống — trang web vẫn
+   chạy bình thường, chat sẽ tự chuyển sang chế độ FAQ có sẵn thay vì AI
+   thật. Điền key vào sau cũng được, không cần deploy lại từ đầu (chỉ cần
+   sửa Environment Variable rồi bấm "Save, rebuild and deploy").
+
+
+BƯỚC 6 — DEPLOY
+--------------------------------------------------------
+1. Bấm "Create Web Service". Render sẽ tự tải code về, cài đặt và chạy —
+   mất khoảng 1-3 phút, có log hiển thị trực tiếp trên màn hình.
+2. Khi thấy dòng "Gemini proxy listening on port ..." trong log là đã
+   chạy thành công.
+3. Phía trên cùng trang có 1 link dạng https://vav-agency.onrender.com
+   — bấm vào, đó chính là landing page CỦA BẠN đã lên mạng thật, ai cũng
+   xem được, chat AI cũng hoạt động luôn (không cần vào admin panel điền
+   gì thêm — trang tự nhận ra API nằm cùng địa chỉ).
+
+Lưu ý gói Free của Render: nếu không có ai truy cập trong một thời gian,
+server sẽ "ngủ" và lần truy cập kế tiếp có thể mất 30-60 giây để "thức
+dậy". Đây là giới hạn bình thường của gói miễn phí — cần chạy nhanh/ổn
+định 24/7 thì nên nâng cấp gói trả phí của Render sau này.
+
+
+BƯỚC 7 (SAU NÀY) — GẮN DOMAIN RIÊNG, VD vavagency.com
+--------------------------------------------------------
+1. Mua domain ở bất kỳ đâu (Namecheap, GoDaddy, Mắt Bão, Nhân Hòa...).
+2. Trong Render Dashboard → chọn Web Service → tab "Settings" →
+   "Custom Domain" → "Add Custom Domain" → nhập domain của bạn.
+3. Render sẽ đưa ra 1-2 dòng cấu hình DNS (thường là CNAME). Vào trang
+   quản lý domain (nơi bạn mua) → phần DNS → thêm đúng dòng đó.
+4. Chờ khoảng 10-60 phút để DNS cập nhật, rồi domain của bạn sẽ trỏ
+   thẳng vào landing page.
+5. Vào Render, sửa Environment Variable ALLOWED_ORIGIN từ "*" thành
+   domain thật (vd: https://vavagency.com) để chỉ trang của bạn được
+   gọi vào server AI, chặn người khác dùng ké.
+
+
+SỬA NỘI DUNG SAU KHI ĐÃ LÊN MẠNG
+--------------------------------------------------------
+Mỗi khi muốn sửa file (đổi ảnh, đổi chữ...), sửa file đó trên máy rồi:
+  - Cách dễ nhất: vào lại repo trên GitHub, bấm vào file cần sửa → bấm
+    icon cây bút (Edit) hoặc "Upload files" để thay file mới → Commit.
+  - Render tự phát hiện thay đổi trên GitHub và tự deploy lại sau
+    khoảng 1-2 phút, không cần làm gì thêm bên Render.
+
+
+TÓM TẮT NHANH
+--------------------------------------------------------
+GitHub  = nơi CẤT code (như ổ cứng online).
+Render  = nơi CHẠY code đó thành 1 trang web thật, có link công khai.
+.env    = chỉ dùng để TEST trên máy bạn. Khi lên Render, các giá trị
+          trong .env được nhập lại vào mục Environment Variables — đó là
+          nơi "đồng bộ dữ liệu" thật sự khi web đã chạy trên internet,
+          không phải file .env trên máy bạn nữa.
